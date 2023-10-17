@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="CodeGenerator/App.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+        <entry key="CodeGenerator/Dialogs/AlertControlDialog.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+        <entry key="CodeGenerator/Dialogs/AlertMessageDialog.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+        <entry key="CodeGenerator/Views/MainWindow.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+        <entry key="CodeGenerator/Views/ShowImageWindow.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+        <entry key="CodeGenerator/Views/ShowTextWindow.axaml" value="CodeGenerator/CodeGenerator.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

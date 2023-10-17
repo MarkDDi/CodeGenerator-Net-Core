@@ -1,0 +1,338 @@
+<Window
+    Background="Transparent"
+    CanResize="False"
+    Icon="/Assets/launcher.ico"
+    Title="软著代码生成器(Software Copyright's Code Generator)"
+    WindowStartupLocation="CenterScreen"
+    d:DesignHeight="600"
+    d:DesignWidth="900"
+    mc:Ignorable="d"
+    x:Class="CodeGenerator.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    x:Name="TargetWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:cvt="clr-namespace:CodeGenerator.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:CodeGenerator.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Window.Resources>
+        <cvt:VisibilityConverter x:Key="VisibilityConverter" />
+
+        <ContextMenu x:Key="RightKeyContextMenu">
+            <MenuItem
+                Click="MenuItem_DeleteButtonOnClick"
+                FontSize="16"
+                Header="删除"
+                Width="120">
+                <MenuItem.Icon>
+                    <TextBlock
+                        FontFamily="avares://CodeGenerator/Assets/#IconFont"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="Red"
+                        Text="&#xe668;"
+                        TextAlignment="Center"
+                        VerticalAlignment="Center" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </Window.Resources>
+
+    <Grid ColumnDefinitions="Auto,0.5,*">
+        <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto">
+            <Button
+                Command="{Binding SelectDirCommand}"
+                CommandParameter="{Binding #TargetWindow}"
+                Content="选择文件（夹）"
+                FontSize="16"
+                Grid.Row="0"
+                Height="35"
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Margin="0,10"
+                VerticalContentAlignment="Center"
+                Width="200" />
+
+            <ListBox
+                BorderThickness="0"
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                ItemsSource="{Binding DirItemCollection}"
+                SelectionMode="Single"
+                x:Name="DirListBox">
+
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="SelectionChanged">
+                        <InvokeCommandAction Command="{Binding DirItemSelectedCommand}" CommandParameter="{Binding #TargetWindow}" />
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            BorderThickness="0"
+                            CornerRadius="5"
+                            Height="50"
+                            Width="200"
+                            x:Name="ListBoxItemBorder">
+                            <StackPanel Orientation="Horizontal" ToolTip.Tip="{Binding FullPath}">
+                                <Image
+                                    Height="35"
+                                    Margin="10,0"
+                                    Source="avares://CodeGenerator/Assets/dir.png"
+                                    Width="35" />
+
+                                <TextBlock
+                                    FontSize="16"
+                                    Text="{Binding Name}"
+                                    VerticalAlignment="Center"
+                                    x:Name="NameTextBlock" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem:selected Border#ListBoxItemBorder">
+                        <Setter Property="Background" Value="#326cf3" />
+                    </Style>
+
+                    <Style Selector="ListBoxItem:selected TextBlock#NameTextBlock">
+                        <Setter Property="Foreground" Value="White" />
+                    </Style>
+
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        <Setter Property="Height" Value="50" />
+                        <Setter Property="Width" Value="200" />
+                        <Setter Property="Margin" Value="0 0 0 5" />
+                        <Setter Property="ContextMenu" Value="{StaticResource RightKeyContextMenu}" />
+                    </Style>
+                </ListBox.Styles>
+            </ListBox>
+
+            <TextBlock
+                FontSize="16"
+                Foreground="DarkGray"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                Margin="65,10"
+                Text="{Binding DirItemCollection.Count, StringFormat='共 {0} 个文件夹'}" />
+        </Grid>
+
+        <Grid Background="LightGray" Grid.Column="1" />
+
+        <Grid Grid.Column="2" RowDefinitions="*,0.5,Auto">
+            <Grid ColumnDefinitions="*,0.5,Auto" Grid.Row="0">
+                <ListBox
+                    BorderThickness="0"
+                    Grid.Column="0"
+                    ItemsSource="{Binding FileCollection}"
+                    SelectedIndex="0"
+                    x:Name="FileListBox">
+
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior EventName="DoubleTapped">
+                            <InvokeCommandAction Command="{Binding MouseDoubleClickCommand}" CommandParameter="{Binding #TargetWindow}" />
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                RowDefinitions="*,*"
+                                ToolTip.Tip="{Binding}"
+                                Width="122">
+                                <Grid
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Center"
+                                    Width="125">
+                                    <Image
+                                        Height="60"
+                                        Margin="0,10"
+                                        Source="avares://CodeGenerator/Assets/dir_file.ico"
+                                        Width="60" />
+
+                                    <Button
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Click="DeleteFileButton_OnClick"
+                                        Content="&#xe668;"
+                                        CornerRadius="13"
+                                        FontFamily="avares://CodeGenerator/Assets/#IconFont"
+                                        FontSize="10"
+                                        FontWeight="Bold"
+                                        Foreground="Transparent"
+                                        Height="26"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,10,0"
+                                        Tag="{Binding}"
+                                        VerticalAlignment="Top"
+                                        VerticalContentAlignment="Center"
+                                        Width="26"
+                                        x:Name="DeleteFileButton" />
+                                </Grid>
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Margin="5,0,5,5"
+                                    Text="{Binding}"
+                                    TextAlignment="Center"
+                                    TextTrimming="WordEllipsis"
+                                    TextWrapping="NoWrap" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <!--  ListBox横排  -->
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Width" Value="122" />
+                            <Setter Property="Margin" Value="3" />
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+
+                <Grid Background="LightGray" Grid.Column="1" />
+
+                <Grid
+                    Grid.Column="2"
+                    RowDefinitions="Auto,0.5,*,0.5,Auto"
+                    Width="200">
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="10"
+                        Orientation="Vertical">
+                        <TextBlock
+                            FontSize="16"
+                            Height="35"
+                            Text="文件后缀" />
+
+                        <TextBox
+                            FontSize="16"
+                            Height="35"
+                            Text="{Binding SuffixType}"
+                            Watermark="请输入文件后缀" />
+
+                        <Button
+                            Background="#326cf3"
+                            Command="{Binding AddFileSuffixTypeCommand}"
+                            Content="添加"
+                            FontSize="16"
+                            Foreground="White"
+                            Height="35"
+                            HorizontalAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Margin="0,10,0,0"
+                            VerticalContentAlignment="Center"
+                            Width="180" />
+                    </StackPanel>
+
+                    <Grid Background="LightGray" Grid.Row="1" />
+
+                    <ListBox
+                        BorderThickness="0"
+                        Grid.Row="2"
+                        ItemsSource="{Binding FileSuffixCollection}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Background="#326cf3"
+                                    CornerRadius="20"
+                                    Height="40"
+                                    Margin="0,5"
+                                    Width="90">
+                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                        <Grid Margin="3,0,0,0" Width="40">
+                                            <TextBlock
+                                                FontSize="14"
+                                                Foreground="White"
+                                                HorizontalAlignment="Center"
+                                                Text="{Binding}"
+                                                VerticalAlignment="Center" />
+                                        </Grid>
+
+                                        <Button
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Click="DeleteFileSuffixButton_OnClick"
+                                            Content="&#xe668;"
+                                            CornerRadius="13"
+                                            FontFamily="avares://CodeGenerator/Assets/#IconFont"
+                                            FontSize="10"
+                                            Foreground="White"
+                                            Height="26"
+                                            Margin="3,0,0,0"
+                                            Tag="{Binding}"
+                                            VerticalContentAlignment="Center"
+                                            Width="26"
+                                            x:Name="DeleteFileSuffixButton" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <!--  ListBox横排  -->
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Width" Value="90" />
+                                <Setter Property="Height" Value="50" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="Margin" Value="5" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+
+                    <Grid Background="LightGray" Grid.Row="3" />
+
+                    <Button
+                        Background="#326cf3"
+                        Command="{Binding GeneratorCodeCommand}"
+                        Content="生成文档"
+                        FontSize="16"
+                        Foreground="White"
+                        Grid.Row="4"
+                        Height="35"
+                        HorizontalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="0,10"
+                        VerticalContentAlignment="Center"
+                        Width="180" />
+                </Grid>
+            </Grid>
+
+            <Grid Background="LightGray" Grid.Row="1" />
+
+            <Grid Grid.Row="2">
+                <ProgressBar
+                    IsVisible="{Binding HandleTextProgress, ConverterParameter=ProgressBar, Converter={StaticResource VisibilityConverter}}"
+                    Margin="10"
+                    Value="{Binding HandleTextProgress}"
+                    x:Name="HandleProgressBar" />
+
+                <TextBlock
+                    FontSize="15"
+                    HorizontalAlignment="Center"
+                    IsVisible="{Binding ElementName=HandleProgressBar, Path=Value, ConverterParameter=TextBlock, Converter={StaticResource VisibilityConverter}}"
+                    Margin="10"
+                    Text="{Binding EffectiveCodeLines, StringFormat='代码文档已生成，有效代码共：{0} 行'}"
+                    VerticalAlignment="Center" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
